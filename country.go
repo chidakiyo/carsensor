@@ -19,8 +19,11 @@ type CountryRequest struct {
 }
 
 type CountryResponse struct {
-	Base
-	Countries []Country
+	ApiVersion       string    `json:"api_version"`
+	ResultsReturned  string    `json:"results_returned"`
+	ResultsAvailable int64     `json:"results_available"`
+	ResultsStart     int64     `json:"results_start"`
+	Countries        []Country `json:"country"`
 }
 
 type Country struct {
@@ -29,11 +32,7 @@ type Country struct {
 }
 
 type Root struct {
-	Results Results `json:"results"`
-}
-
-type Results struct {
-	ApiVersion string `json:"api_version"`
+	Results CountryResponse `json:"results"`
 }
 
 func Execute(param CountryRequest) string {
@@ -52,7 +51,7 @@ func Execute(param CountryRequest) string {
 		panic(err)
 	}
 
-	fmt.Printf("%#+v\n", response)
+	fmt.Printf("%+v\n", response)
 
 	return string(body)
 }

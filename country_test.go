@@ -1,10 +1,9 @@
 package carsensor_api_go
 
 import (
-	"encoding/json"
 	"fmt"
-	"testing"
 	"os"
+	"testing"
 )
 
 var API_KEY = os.Getenv("CS_KEY") // 環境変数にKEYを設定しておく ex. export CS_KEY={YOUR_KEY}
@@ -24,16 +23,16 @@ func TestExecute(t *testing.T) {
 	fmt.Println(actual)
 }
 
-func TestExecute2(t *testing.T) {
-
-	r := Root{
-		Results: Results{
-			ApiVersion: "B",
-		},
-	}
-
-	b, _ := json.Marshal(r)
-
-	fmt.Println(string(b) + "----")
-
-}
+//func TestExecute2(t *testing.T) {
+//
+//	r := Root{
+//		Results: Results{
+//			ApiVersion: "B",
+//		},
+//	}
+//
+//	b, _ := json.Marshal(r)
+//
+//	fmt.Println(string(b) + "----")
+//
+//}
