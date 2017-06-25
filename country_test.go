@@ -4,12 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"testing"
+	"os"
 )
+
+var API_KEY = os.Getenv("CS_KEY") // 環境変数にKEYを設定しておく ex. export CS_KEY={YOUR_KEY}
 
 func TestExecute(t *testing.T) {
 
 	param := CountryRequest{
-		Key:  "YOUR_KEY",
+		Key:  API_KEY,
 		Code: "",
 	}
 
