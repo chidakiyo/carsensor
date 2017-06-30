@@ -1,5 +1,12 @@
 package carsensor_api_go
 
+import (
+	"net/http"
+	"io/ioutil"
+	"fmt"
+	"encoding/json"
+)
+
 // Bland Master
 
 const (
@@ -31,4 +38,27 @@ type Bland struct {
 	code string
 	name string
 	Country
+}
+
+func SearchBrand(param BlandRequest) string {
+	URL := "http://webservice.recruit.co.jp/carsensor/country/v1/"
+
+	// TODO code利用する実装
+
+	resp, err := http.Get(URL + "?key=" + param.Key + "&format=" + FORMAT) // TODO 全件
+	defer resp.Body.Close()
+	if err != nil {
+		// TODO handle error
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+
+	response := &Root{}
+	if err := json.Unmarshal(body, response); err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("%+v\n", response)
+
+	return string(body)
 }

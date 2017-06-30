@@ -8,14 +8,14 @@ import (
 
 var API_KEY = os.Getenv("CS_KEY") // 環境変数にKEYを設定しておく ex. export CS_KEY={YOUR_KEY}
 
-func TestExecute(t *testing.T) {
+func TestSearchCountry(t *testing.T) {
 
 	param := CountryRequest{
 		Key:  API_KEY,
 		Code: "",
 	}
 
-	actual := Execute(param)
+	actual := SearchCountry(param)
 	//if actual != expected {
 	//	t.Errorf("got %v\nwant %v", actual, expected)
 	//}

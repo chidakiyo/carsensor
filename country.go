@@ -35,10 +35,12 @@ type Root struct {
 	Results CountryResponse `json:"results"`
 }
 
-func Execute(param CountryRequest) string {
+func SearchCountry(param CountryRequest) string {
 	URL := "http://webservice.recruit.co.jp/carsensor/country/v1/"
 
-	resp, err := http.Get(URL + "?key=" + param.Key + "&format=" + FORMAT + "&code=JPN") // TODO 全件
+	// TODO code利用する実装
+
+	resp, err := http.Get(URL + "?key=" + param.Key + "&format=" + FORMAT) // TODO 全件
 	defer resp.Body.Close()
 	if err != nil {
 		// TODO handle error
