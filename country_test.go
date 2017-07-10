@@ -10,7 +10,9 @@ var API_KEY = os.Getenv("CS_KEY") // 環境変数にKEYを設定しておく ex.
 
 func TestSearchCountry(t *testing.T) {
 
-	param := CountryRequest{
+	fmt.Println("---> Country Master -----------------------------")
+
+	param := CountryQuery{
 		Key:  API_KEY,
 		Code: "",
 	}
@@ -21,6 +23,8 @@ func TestSearchCountry(t *testing.T) {
 	//}
 
 	fmt.Println(actual)
+
+	fmt.Println("==========")
 }
 
 //func TestExecute2(t *testing.T) {

@@ -5,16 +5,16 @@ import (
 	"testing"
 )
 
-func TestSearchBrand(t *testing.T) {
+func TestSearchPrefecture(t *testing.T) {
 
-	fmt.Println("---> Brand Master -----------------------------")
+	fmt.Println("---> Prefecture Master -----------------------------")
 
-	param := BrandQuery{
+	param := PrefectureQuery{
 		Key:  API_KEY,
 		Code: "",
 	}
 
-	actual := SearchBrand(param)
+	actual := SearchPrefecture(param)
 	//if actual != expected {
 	//	t.Errorf("got %v\nwant %v", actual, expected)
 	//}

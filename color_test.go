@@ -5,16 +5,15 @@ import (
 	"testing"
 )
 
-func TestSearchBrand(t *testing.T) {
+func TestSearchColor(t *testing.T) {
 
-	fmt.Println("---> Brand Master -----------------------------")
+	fmt.Println("---> Color Master -----------------------------")
 
-	param := BrandQuery{
-		Key:  API_KEY,
-		Code: "",
+	param := ColorQuery{
+		Key: API_KEY,
 	}
 
-	actual := SearchBrand(param)
+	actual := SearchColor(param)
 	//if actual != expected {
 	//	t.Errorf("got %v\nwant %v", actual, expected)
 	//}
