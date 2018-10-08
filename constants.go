@@ -9,5 +9,6 @@ const (
 	URL_PREFECTURE = CARSENSOR + "/pref/v1/"
 	URL_BODY_TYPE  = CARSENSOR + "/body/v1/"
 	URL_USEDCAR    = CARSENSOR + "/usedcar/v1/"
+	URL_CATALOG    = CARSENSOR + "/catalog/v1/"
 	FORMAT         = "json"
 )

@@ -160,6 +160,12 @@ type PhotoMain struct {
 	Caption string
 }
 
+type PhotoAll struct {
+	Front  PhotoMain `json:"front"`
+	Rear   PhotoMain `json:"rear"`
+	Inpane PhotoMain `json:"inpane"`
+}
+
 type URLS struct {
 	// PC向けURL
 	PC string
