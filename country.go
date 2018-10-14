@@ -35,6 +35,7 @@ func SearchCountry(param CountryQuery) CountryResponse {
 	defer resp.Body.Close()
 	if err != nil {
 		// TODO handle error
+		fmt.Printf("request error : %s\n", err.Error())
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -46,7 +47,7 @@ func SearchCountry(param CountryQuery) CountryResponse {
 		panic(err)
 	}
 
-	fmt.Printf("[[ RESPONSE ]]\n%+v\n", response)
+	fmt.Printf("[[ RESPONSE ]] %#+v\n", response)
 
 	return response.Results
 }
