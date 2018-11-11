@@ -2,7 +2,7 @@ package carsensor_api_go
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 )
@@ -11,11 +11,11 @@ import (
 
 type PrefectureQuery struct {
 	// apiキー
-	Key string
+	Key string `json:"key"`
 	// ブランドコード
-	Code string
+	Code string `json:"code"`
 	// 大エリア
-	Area string
+	Area string `json:"area"`
 }
 
 type PrefectureResponse struct {
@@ -29,16 +29,19 @@ type Prefecture struct {
 	Area Area   `json:"large_area"`
 }
 
-func SearchPrefecture(param PrefectureQuery) PrefectureResponse {
+func SearchPrefecture(param PrefectureQuery) (PrefectureResponse, error) {
 
-	// TODO code利用する実装
+	u, err := CreateURL(URL_PREFECTURE, param)
+	if err != nil {
+		err := errors.Wrap(err, "create url fail.")
+		return PrefectureResponse{}, err // fail
+	}
 
-	// TODO large_area
-
-	resp, err := http.Get(URL_PREFECTURE + "?key=" + param.Key + "&format=" + FORMAT) // TODO 全件
+	resp, err := http.Get(u.String())
 	defer resp.Body.Close()
 	if err != nil {
-		// TODO handle error
+		err := errors.Wrap(err, "http get fail.")
+		return PrefectureResponse{}, err // fail
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -47,10 +50,9 @@ func SearchPrefecture(param PrefectureQuery) PrefectureResponse {
 		Results PrefectureResponse `json:"results"`
 	}{}
 	if err := json.Unmarshal(body, response); err != nil {
-		panic(err)
+		err := errors.Wrap(err, "json unmarshal fail.")
+		return PrefectureResponse{}, err // fail
 	}
 
-	fmt.Printf("[[ RESPONSE ]]\n%+v\n", response)
-
-	return response.Results
+	return response.Results, nil // success
 }

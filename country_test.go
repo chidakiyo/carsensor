@@ -17,12 +17,12 @@ func TestSearchCountry(t *testing.T) {
 		Code: "",
 	}
 
-	actual := SearchCountry(param)
+	actual, _ := SearchCountry(param)
 	//if actual != expected {
 	//	t.Errorf("got %v\nwant %v", actual, expected)
 	//}
 
-	fmt.Println(actual)
+	fmt.Println(PrettyPrint(actual))
 
 	fmt.Println("==========")
 }

@@ -2,7 +2,7 @@ package carsensor_api_go
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 )
@@ -10,8 +10,8 @@ import (
 // Country Master
 
 type CountryQuery struct {
-	Key  string
-	Code string
+	Key  string `json:"key"`
+	Code string `json:"code"`
 }
 
 type CountryResponse struct {
@@ -27,15 +27,19 @@ type Country struct {
 	Name string `json:"name"`
 }
 
-func SearchCountry(param CountryQuery) CountryResponse {
+func SearchCountry(param CountryQuery) (CountryResponse, error) {
 
-	// TODO code利用する実装
+	u, err := CreateURL(URL_COUNTRY, param)
+	if err != nil {
+		err := errors.Wrap(err, "create url fail.")
+		return CountryResponse{}, err // fail
+	}
 
-	resp, err := http.Get(URL_COUNTRY + "?key=" + param.Key + "&format=" + FORMAT) // TODO 全件
+	resp, err := http.Get(u.String())
 	defer resp.Body.Close()
 	if err != nil {
-		// TODO handle error
-		fmt.Printf("request error : %s\n", err.Error())
+		err := errors.Wrap(err, "http get fail.")
+		return CountryResponse{}, err // fail
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -44,10 +48,9 @@ func SearchCountry(param CountryQuery) CountryResponse {
 		Results CountryResponse `json:"results"`
 	}{}
 	if err := json.Unmarshal(body, response); err != nil {
-		panic(err)
+		err := errors.Wrap(err, "json unmarshal fail.")
+		return CountryResponse{}, err // fail
 	}
 
-	fmt.Printf("[[ RESPONSE ]] %#+v\n", response)
-
-	return response.Results
+	return response.Results, nil // success
 }

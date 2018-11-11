@@ -2,7 +2,7 @@ package carsensor_api_go
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 )
@@ -11,9 +11,9 @@ import (
 
 type AreaQuery struct {
 	// apiキー
-	Key string
+	Key string `json:"key"`
 	// ブランドコード
-	Code string
+	Code string `json:"code"`
 }
 
 type AreaResponse struct {
@@ -26,14 +26,19 @@ type Area struct {
 	Name string `json:"name"`
 }
 
-func SearchArea(param AreaQuery) AreaResponse {
+func SearchArea(param AreaQuery) (AreaResponse, error) {
 
-	// TODO code利用する実装
+	u, err := CreateURL(URL_AREA, param)
+	if err != nil {
+		err := errors.Wrap(err, "create url fail.")
+		return AreaResponse{}, err // fail
+	}
 
-	resp, err := http.Get(URL_AREA + "?key=" + param.Key + "&format=" + FORMAT) // TODO 全件
+	resp, err := http.Get(u.String())
 	defer resp.Body.Close()
 	if err != nil {
-		// TODO handle error
+		err := errors.Wrap(err, "http get fail.")
+		return AreaResponse{}, err // fail
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -42,10 +47,10 @@ func SearchArea(param AreaQuery) AreaResponse {
 		Results AreaResponse `json:"results"`
 	}{}
 	if err := json.Unmarshal(body, response); err != nil {
-		panic(err)
+		err := errors.Wrap(err, "json unmarshal fail.")
+		return AreaResponse{}, err // fail
 	}
 
-	fmt.Printf("[[ RESPONSE ]]\n%+v\n", response)
 
-	return response.Results
+	return response.Results, nil // success
 }

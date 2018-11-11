@@ -13,12 +13,12 @@ func TestSearchColor(t *testing.T) {
 		Key: API_KEY,
 	}
 
-	actual := SearchColor(param)
+	actual, _ := SearchColor(param)
 	//if actual != expected {
 	//	t.Errorf("got %v\nwant %v", actual, expected)
 	//}
 
-	fmt.Println(actual)
+	fmt.Println(PrettyPrint(actual))
 
 	fmt.Println("==========")
 }

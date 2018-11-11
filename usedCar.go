@@ -3,6 +3,7 @@ package carsensor_api_go
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 )
@@ -11,61 +12,61 @@ import (
 
 type UsedCarQuery struct {
 	// apiキー
-	Key string
+	Key string `json:"key"`
 	// 物件ID
-	ID string
+	ID string `json:"id"`
 	// ブランドコード
-	Brand string
+	Brand string `json:"brand"`
 	// 車種名
-	Model string
+	Model string `json:"model"`
 	// 国コード
-	Country string
+	Country string `json:"country"`
 	// 大エリアコード
-	LargeArea string
+	LargeArea string `json:"large_area"`
 	// 都道府県コード
-	Pref string
+	Pref string `json:"pref"`
 	// ボディタイプコード
-	Body string
+	Body string `json:"body"`
 	// 定員
-	Person string
+	Person string `json:"person"`
 	// カラーコード
-	Color string
+	Color string `json:"color"`
 	// 最低価格
-	PriceMin uint64
+	PriceMin uint64 `json:"price_min"`
 	// 最高価格
-	PriceMax uint64
+	PriceMax uint64 `json:"price_max"`
 	//キーワード
-	Keyword string
+	Keyword string `json:"keyword"`
 	// 緯度
-	Lat float64
+	Lat float64 `json:"lat"`
 	// 経度
-	Lng float64
+	Lng float64 `json:"lng"`
 	// 検索範囲
-	Range int64
+	Range int64 `json:"range"`
 	// 測地系
-	Datum string
+	Datum string `json:"datum"`
 	// ミッション種類
-	Mission int64
+	Mission int64 `json:"mission"`
 	// 禁煙車
-	Nonsmoking int64
+	Nonsmoking int64 `json:"nonsmoking"`
 	// 本革シート
-	Leather int64
+	Leather int64 `json:"leather"`
 	// 福祉車両
-	Welfare int64
+	Welfare int64 `json:"welfare"`
 	// 登録年式(古い)
-	YearOld int64
+	YearOld int64 `json:"year_old"`
 	// 登録年式(新しい)
-	YearNew int64
+	YearNew int64 `json:"year_new"`
 	// 走行距離(最短)
-	OddMin int64
+	OddMin int64 `json:"odd_min"`
 	// 走行距離(最長)
-	OddMax int64
+	OddMax int64 `json:"odd_max"`
 	// ソート順
-	Order int64
+	Order int64 `json:"order"`
 	// 検索の開始位置
-	Start int64
+	Start int64 `json:"start"`
 	// 1ページあたりの取得数
-	Count int64
+	Count int64 `json:"count"`
 }
 
 type UsedCarResponse struct {
@@ -175,20 +176,21 @@ type URLS struct {
 	QR string
 }
 
-func SearchUsedCar(param UsedCarQuery) UsedCarResponse {
+func SearchUsedCar(param UsedCarQuery) (UsedCarResponse, error) {
 
-	// TODO code利用する実装
+	u, err := CreateURL(URL_USEDCAR, param)
+	if err != nil {
+		err := errors.Wrap(err, "create url fail.")
+		return UsedCarResponse{}, err // fail
+	}
 
-	// TODO large_area
+	fmt.Printf("URL : %s\n", u.String())
 
-	url := URL_USEDCAR + "?key=" + param.Key + "&format=" + FORMAT + "&model=ジュリア" + "&count=1"
-
-	fmt.Printf("[URL] %s\n", url)
-
-	resp, err := http.Get(url) // TODO 全件
+	resp, err := http.Get(u.String())
 	defer resp.Body.Close()
 	if err != nil {
-		// TODO handle error
+		err := errors.Wrap(err, "http get fail.")
+		return UsedCarResponse{}, err // fail
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -197,17 +199,9 @@ func SearchUsedCar(param UsedCarQuery) UsedCarResponse {
 		Results UsedCarResponse `json:"results"`
 	}{}
 	if err := json.Unmarshal(body, response); err != nil {
-		panic(err)
+		err := errors.Wrap(err, "json unmarshal fail.")
+		return UsedCarResponse{}, err // fail
 	}
 
-	fmt.Printf("[[ RESPONSE BODY ]]\n%+v\n", string(body))
-	fmt.Printf("[[ RESPONSE MAPPING ]]\n%+v\n", response)
-
-	fmt.Printf("[[ URL ]]\n%+v\n", response.Results.UsedCars[0].URLS)
-
-	fmt.Printf("[[ BODY ]]\n%+v\n", response.Results.UsedCars[0].Body)
-
-	fmt.Printf("[[ SUB_IMG ]]\n%+v\n", response.Results.UsedCars[0])
-
-	return response.Results
+	return response.Results, nil // success
 }

@@ -14,12 +14,12 @@ func TestSearchPrefecture(t *testing.T) {
 		Code: "",
 	}
 
-	actual := SearchPrefecture(param)
+	actual, _ := SearchPrefecture(param)
 	//if actual != expected {
 	//	t.Errorf("got %v\nwant %v", actual, expected)
 	//}
 
-	fmt.Println(actual)
+	fmt.Println(PrettyPrint(actual))
 
 	fmt.Println("==========")
 }

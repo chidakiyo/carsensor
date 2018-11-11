@@ -14,12 +14,12 @@ func TestSearchArea(t *testing.T) {
 		Code: "",
 	}
 
-	actual := SearchArea(param)
+	actual, _ := SearchArea(param)
 	//if actual != expected {
 	//	t.Errorf("got %v\nwant %v", actual, expected)
 	//}
 
-	fmt.Println(actual)
+	fmt.Println(PrettyPrint(actual))
 
 	fmt.Println("==========")
 }

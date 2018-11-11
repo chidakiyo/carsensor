@@ -12,17 +12,19 @@ func TestUsedCar(t *testing.T) {
 	param := UsedCarQuery{
 		Key:     API_KEY,
 		Mission: 1, // AT
-		Model:   "S4",
+		Model:   "ジュリア",
+		Count:   1,
 	}
 
-	actual := SearchUsedCar(param)
+	actual, err := SearchUsedCar(param)
+	if err != nil {
+		t.Fatalf("%s", err)
+	}
 	//if actual != expected {
 	//	t.Errorf("got %v\nwant %v", actual, expected)
 	//}
 
-	fmt.Println("~~~~~")
-
-	fmt.Println(actual)
+	fmt.Println(PrettyPrint(actual))
 
 	fmt.Println("==========")
 }

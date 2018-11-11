@@ -2,7 +2,7 @@ package carsensor_api_go
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 )
@@ -11,41 +11,41 @@ import (
 
 type CatalogQuery struct {
 	//
-	Key string
+	Key string `json:"key"`
 	//
-	Brand Brand
+	Brand string `json:"brand"`
 	//
-	Model string
+	Model string `json:"model"`
 	//
-	Country Country
+	Country string `json:"country"`
 	//
-	Body BodyType
+	Body string `json:"body"`
 	//
-	Person int64
+	Person int64 `json:"person"`
 	//
-	YearOld int64
+	YearOld int64 `json:"year_old"`
 	//
-	YearNew int64
+	YearNew int64 `json:"year_new"`
 	//
-	Welfare string
+	Welfare string `json:"welfare"`
 	//
-	Series string
+	Series string `json:"series"`
 	//
-	Keyword string
+	Keyword string `json:"keyword"`
 	//
-	WidthMax string
+	WidthMax string `json:"width_max"`
 	//
-	HeightMax string
+	HeightMax string `json:"height_max"`
 	//
-	LengthMax string
+	LengthMax string `json:"length_max"`
 	//
-	Order string
+	Order string `json:"order"`
 	//
-	Start string
+	Start string `json:"start"`
 	//
-	Count string
+	Count string `json:"count"`
 	//
-	Format string
+	Format string `json:"format"`
 }
 
 type CatalogResponse struct {
@@ -71,28 +71,30 @@ type Catalog struct {
 	Desc        string   `json:"desc"`
 }
 
-func SearchCatalog(param CatalogQuery) CatalogResponse {
+func SearchCatalog(param CatalogQuery) (CatalogResponse, error) {
 
-	// TODO code利用する実装
+	u, err := CreateURL(URL_CATALOG, param)
+	if err != nil {
+		err := errors.Wrap(err, "create url fail.")
+		return CatalogResponse{}, err // fail
+	}
 
-	resp, err := http.Get(URL_CATALOG + "?key=" + param.Key + "&keyword=インプレッサ" + "&format=" + FORMAT) // TODO 全件
+	resp, err := http.Get(u.String())
 	defer resp.Body.Close()
 	if err != nil {
-		// TODO handle error
+		err := errors.Wrap(err, "http get fail.")
+		return CatalogResponse{}, err // fail
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
-
-	fmt.Printf("%s", body)
 
 	response := &struct {
 		Results CatalogResponse `json:"results"`
 	}{}
 	if err := json.Unmarshal(body, response); err != nil {
-		panic(err)
+		err := errors.Wrap(err, "json unmarshal fail.")
+		return CatalogResponse{}, err // fail
 	}
 
-	fmt.Printf("[[ RESPONSE ]]\n%+v\n", response)
-
-	return response.Results
+	return response.Results, nil // success
 }

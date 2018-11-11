@@ -13,12 +13,12 @@ func TestBodyType(t *testing.T) {
 		Key: API_KEY,
 	}
 
-	actual := SearchBodyType(param)
+	actual, _ := SearchBodyType(param)
 	//if actual != expected {
 	//	t.Errorf("got %v\nwant %v", actual, expected)
 	//}
 
-	fmt.Println(actual)
+	fmt.Println(PrettyPrint(actual))
 
 	fmt.Println("==========")
 }

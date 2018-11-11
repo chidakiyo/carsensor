@@ -2,7 +2,7 @@ package carsensor_api_go
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 )
@@ -11,7 +11,7 @@ import (
 
 type ColorQuery struct {
 	// apiキー
-	Key string
+	Key string `json:"key"`
 }
 
 type ColorResponse struct {
@@ -24,14 +24,19 @@ type Color struct {
 	Name string `json:"name"`
 }
 
-func SearchColor(param ColorQuery) ColorResponse {
+func SearchColor(param ColorQuery) (ColorResponse, error) {
 
-	// TODO code利用する実装
+	u, err := CreateURL(URL_COLOR, param)
+	if err != nil {
+		err := errors.Wrap(err, "create url fail.")
+		return ColorResponse{}, err // fail
+	}
 
-	resp, err := http.Get(URL_COLOR + "?key=" + param.Key + "&format=" + FORMAT) // TODO 全件
+	resp, err := http.Get(u.String())
 	defer resp.Body.Close()
 	if err != nil {
-		// TODO handle error
+		err := errors.Wrap(err, "http get fail.")
+		return ColorResponse{}, err // fail
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -40,10 +45,9 @@ func SearchColor(param ColorQuery) ColorResponse {
 		Results ColorResponse `json:"results"`
 	}{}
 	if err := json.Unmarshal(body, response); err != nil {
-		panic(err)
+		err := errors.Wrap(err, "json unmarshal fail.")
+		return ColorResponse{}, err // fail
 	}
 
-	fmt.Printf("[[ RESPONSE ]]\n%+v\n", response)
-
-	return response.Results
+	return response.Results, nil // success
 }

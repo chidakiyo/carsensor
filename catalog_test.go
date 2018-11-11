@@ -11,11 +11,12 @@ func TestCatalog(t *testing.T) {
 
 	param := CatalogQuery{
 		Key: API_KEY,
+		Country:"GER",
 	}
 
-	actual := SearchCatalog(param)
+	actual, _ := SearchCatalog(param)
 
-	fmt.Println(actual)
+	fmt.Println(PrettyPrint(actual))
 
 	fmt.Println("==========")
 }

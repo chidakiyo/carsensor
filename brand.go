@@ -2,7 +2,7 @@ package carsensor_api_go
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 )
@@ -11,11 +11,11 @@ import (
 
 type BrandQuery struct {
 	// apiキー
-	Key string
+	Key string `json:"key"`
 	// ブランドコード
-	Code string
+	Code string `json:"code"`
 	// 国コード
-	Country string
+	Country string `json:"country"`
 }
 
 type BrandResponse struct {
@@ -29,14 +29,19 @@ type Brand struct {
 	Country
 }
 
-func SearchBrand(param BrandQuery) BrandResponse {
+func SearchBrand(param BrandQuery) (BrandResponse, error) {
 
-	// TODO code利用する実装
+	u, err := CreateURL(URL_BRAND, param)
+	if err != nil {
+		err := errors.Wrap(err, "create url fail.")
+		return BrandResponse{}, err // fail
+	}
 
-	resp, err := http.Get(URL_BRAND + "?key=" + param.Key + "&format=" + FORMAT) // TODO 全件
+	resp, err := http.Get(u.String())
 	defer resp.Body.Close()
 	if err != nil {
-		// TODO handle error
+		err := errors.Wrap(err, "http get fail.")
+		return BrandResponse{}, err // fail
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -45,10 +50,9 @@ func SearchBrand(param BrandQuery) BrandResponse {
 		Results BrandResponse `json:"results"`
 	}{}
 	if err := json.Unmarshal(body, response); err != nil {
-		panic(err)
+		err := errors.Wrap(err, "json unmarshal fail.")
+		return BrandResponse{}, err // fail
 	}
 
-	fmt.Printf("[[ RESPONSE ]]\n%+v\n", response)
-
-	return response.Results
+	return response.Results, nil // success
 }

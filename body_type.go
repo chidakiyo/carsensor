@@ -3,6 +3,7 @@ package carsensor_api_go
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 )
@@ -11,7 +12,7 @@ import (
 
 type BodyTypeQuery struct {
 	// apiキー
-	Key string
+	Key string `json:"key"`
 }
 
 type BodyTypeResponse struct {
@@ -24,14 +25,19 @@ type BodyType struct {
 	Name string `json:"name"`
 }
 
-func SearchBodyType(param BodyTypeQuery) BodyTypeResponse {
+func SearchBodyType(param BodyTypeQuery) (BodyTypeResponse, error) {
 
-	// TODO code利用する実装
+	u, err := CreateURL(URL_BODY_TYPE, param)
+	if err != nil {
+		err := errors.Wrap(err, "create url fail.")
+		return BodyTypeResponse{}, err // fail
+	}
 
-	resp, err := http.Get(URL_BODY_TYPE + "?key=" + param.Key + "&format=" + FORMAT) // TODO 全件
+	resp, err := http.Get(u.String())
 	defer resp.Body.Close()
 	if err != nil {
-		// TODO handle error
+		err := errors.Wrap(err, "http get fail.")
+		return BodyTypeResponse{}, err // fail
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -40,10 +46,11 @@ func SearchBodyType(param BodyTypeQuery) BodyTypeResponse {
 		Results BodyTypeResponse `json:"results"`
 	}{}
 	if err := json.Unmarshal(body, response); err != nil {
-		panic(err)
+		err := errors.Wrap(err, "json unmarshal fail.")
+		return BodyTypeResponse{}, err // fail
 	}
 
 	fmt.Printf("[[ RESPONSE ]]\n%+v\n", response)
 
-	return response.Results
+	return response.Results, nil // success
 }

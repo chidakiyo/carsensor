@@ -14,12 +14,12 @@ func TestSearchBrand(t *testing.T) {
 		Code: "",
 	}
 
-	actual := SearchBrand(param)
+	actual, _ := SearchBrand(param)
 	//if actual != expected {
 	//	t.Errorf("got %v\nwant %v", actual, expected)
 	//}
 
-	fmt.Println(actual)
+	fmt.Println(PrettyPrint(actual))
 
 	fmt.Println("==========")
 }
